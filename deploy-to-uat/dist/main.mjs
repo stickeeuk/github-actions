@@ -88,6 +88,7 @@ async function createDeployment() {
       description: "Deployment from UAT",
       transient_environment: true,
       environment: "uat",
+      auto_merge: false,
       required_contexts: []
     })
   });
