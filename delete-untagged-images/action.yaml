@@ -1,0 +1,13 @@
+name: "Delete Untagged Images"
+description: 'Delete untagged images from GitHub Container Registry'
+inputs:
+  package-names:
+    description: 'A JSON string containing an array of the package names: https://github.com/stickeeuk/mixer/pkgs/container/PACKAGE_NAME, e.g. ''["my-app", "my-nginx"]'''
+    required: true
+  github-token:
+    description: 'A GitHub token to access the package'
+    required: true
+
+runs:
+  using: 'node16'
+  main: 'dist/main.mjs'

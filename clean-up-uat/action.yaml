@@ -1,0 +1,37 @@
+name: "Clean Up UAT"
+description: 'Clean up data, delete images, etc.'
+inputs:
+  package-names:
+    description: 'A JSON string containing an array of the package names: https://github.com/stickeeuk/REPOSITORY_NAME/pkgs/container/PACKAGE_NAME, e.g. ''["my-app", "my-nginx"]'''
+    required: true
+  gooee-actions:
+    description: 'A JSON string containing an array of gooee actions'
+    required: false
+    default: '["cache:clear", "queue:clear", "db:drop"]'
+  github-token:
+    description: 'A GitHub token to access the packages'
+    required: true
+  repository-name:
+    description: 'The repository name (and project directory name in the UAT respository)'
+    default: ${{ github.event.repository.name }}
+    required: false
+  subdomain:
+    description: 'The subdomain the primary ingress should be on (usually "pr-<Pull Request ID>")'
+    default: pr-${{ github.event.pull_request.number }}
+    required: false
+  branch-name:
+    description: "The branch name the PR is targeting - used to get the Deployment"
+    default: ${{ github.head_ref }}
+    required: false
+  application-file:
+    description: 'The path to the application-uat.yaml file'
+    required: false
+    default: ${{ github.workspace }}/uat/uat/${{ github.event.repository.name }}/applications/${{ github.event.repository.name }}-${{ github.event.pull_request.number }}.yaml
+  version:
+    description: 'The deployment''s docker image(s) version (tag)'
+    default: ${{ github.event.pull_request.number }}
+    required: false
+
+runs:
+  using: 'node16'
+  main: 'dist/main.mjs'

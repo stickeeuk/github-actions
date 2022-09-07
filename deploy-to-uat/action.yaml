@@ -1,0 +1,46 @@
+name: "Deploy to UAT"
+description: 'Create an ArgoCD application that will cause the branch to be deployed to the UAT system'
+inputs:
+  app-id:
+    description: 'The unique name for the Application'
+    default: ${{ github.event.repository.name }}-${{ github.event.pull_request.number || github.ref_name }}
+    required: false
+  git-sha:
+    description: 'The Git SHA of the head commit'
+    default: ${{ github.event.pull_request.head.sha || github.sha }}
+    required: false
+  github-token:
+    description: 'A GitHub token to access the UAT repository'
+    required: true
+  subdomain:
+    description: 'The subdomain the primary ingress should be on (usually "pr-<Pull Request ID>")'
+    default: pr-${{ github.event.pull_request.number || github.ref_name }}
+    required: false
+  repository-name:
+    description: 'The repository name (and project directory name in the UAT respository)'
+    default: ${{ github.event.repository.name }}
+    required: false
+  version:
+    description: 'The deployment''s docker image(s) version (tag)'
+    default: ${{ github.event.pull_request.number || github.ref_name }}
+    required: false
+  branch-name:
+    description: "The branch name the PR is targeting - used to get the Deployment"
+    default: ${{ github.head_ref || github.ref_name }}
+    required: false
+  extra-variables:
+    description: 'Extra variables to be replaced in the Application YAML file. A JSON string of Record<string, string>, e.g. {"FOO":"BAR","X":"123"}'
+    default: '[]'
+    required: false
+  application-template-file:
+    description: The path to the Application YAML template file
+    default: ${{ github.workspace }}/infrastructure/application-uat.yaml
+    required: false
+  application-output-file:
+    description: The path to the Application YAML template file
+    default: ${{ github.workspace }}/uat/uat/${{ github.event.repository.name }}/applications/${{ github.event.repository.name }}-${{ github.event.pull_request.number || github.ref_name }}.yaml
+    required: false
+
+runs:
+  using: 'node16'
+  main: 'dist/main.mjs'
