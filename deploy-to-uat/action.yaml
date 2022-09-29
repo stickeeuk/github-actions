@@ -9,12 +9,16 @@ inputs:
     description: 'The Git SHA of the head commit'
     default: ${{ github.event.pull_request.head.sha || github.sha }}
     required: false
+  github-pr-number:
+    description: 'The Pull Request number, if available'
+    default: ${{ github.event.pull_request.number }}
+    required: false
   github-token:
     description: 'A GitHub token to access the UAT repository'
     required: true
   subdomain:
     description: 'The subdomain the primary ingress should be on (usually "pr-<Pull Request ID>")'
-    default: pr-${{ github.event.pull_request.number || github.ref_name }}
+    default: ""
     required: false
   repository-name:
     description: 'The repository name (and project directory name in the UAT respository)'

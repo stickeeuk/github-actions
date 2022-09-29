@@ -40,7 +40,6 @@ const requiredInputs = [
   "app-id",
   "git-sha",
   "github-token",
-  "subdomain",
   "repository-name",
   "version",
   "branch-name",
@@ -56,10 +55,20 @@ const branchName = core.getInput("branch-name");
 const extraVariables = JSON.parse(core.getInput("extra-variables"));
 await deleteOldDeployments();
 const deploymentId = await createDeployment();
+let subdomain = core.getInput("subdomain");
+if (!subdomain) {
+  const pr = core.getInput("github-pr-number");
+  if (pr) {
+    subdomain = `pr-${pr}`;
+  } else {
+    subdomain = branchName;
+  }
+}
 const variables = getVariables({
   ...extraVariables,
   DEPLOYMENT_ID: deploymentId.toString(),
-  APP_ID_SNAKE: core.getInput("app-id").replace(/-/g, "_")
+  APP_ID_SNAKE: core.getInput("app-id").replace(/-/g, "_"),
+  SUBDOMAIN: subdomain
 });
 await createApplicationYaml(variables);
 await commitAndPush();
@@ -97,7 +106,11 @@ async function createDeployment() {
   return data.id;
 }
 function getVariables(extraVariables2) {
-  const envVariables = Object.keys(process.env).filter((key) => key.startsWith("INPUT_") && key !== "INPUT_EXTRA-VARIABLES").map((key) => {
+  const ignored = [
+    "INPUT_EXTRA-VARIABLES",
+    "INPUT_SUBDOMAIN"
+  ];
+  const envVariables = Object.keys(process.env).filter((key) => key.startsWith("INPUT_")).filter((key) => !ignored.includes(key)).map((key) => {
     return {
       name: key.substring(6).replace(/-/g, "_"),
       value: process.env[key] || ""
