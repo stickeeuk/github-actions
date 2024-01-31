@@ -7,12 +7,12 @@
     "build": "tsc && vite build --outDir dist --ssr src/main.mts"
   },
   "devDependencies": {
-    "typescript": "^4.6.4",
-    "vite": "^3.0.7"
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12"
   },
   "dependencies": {
     "@actions/core": "^1.9.1",
-    "@types/node": "^18.7.3",
+    "@types/node": "^20.11.13",
     "node-fetch": "^3.2.10"
   }
 }
